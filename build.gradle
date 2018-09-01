@@ -1,0 +1,44 @@
+buildscript {
+    repositories {
+        jcenter()
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'org.ajoberstar:grgit:1.5.0'
+    }
+}
+
+plugins {
+    id 'java'
+}
+
+group 'moe.evelyn.albatross'
+version '5.0'
+
+sourceCompatibility = 1.8
+
+ext {
+    git = org.ajoberstar.grgit.Grgit.open(file('.'))
+    revision = git.head().id
+}
+
+jar {
+    manifest {
+        attributes(
+            "Version"     : version,
+            "Git-Version" : revision
+        )
+    }
+}
+
+repositories {
+    mavenCentral()
+    maven {
+        name 'Bukkit'
+        url  "https://hub.spigotmc.org/nexus/content/repositories/snapshots/"
+    }
+}
+
+dependencies {
+    compile 'org.bukkit:bukkit:1.8-R0.1-SNAPSHOT'
+}

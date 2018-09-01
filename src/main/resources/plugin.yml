@@ -1,0 +1,22 @@
+name: Commandspy
+main: moe.evelyn.albatross.Main
+version: 5.0.0
+author: Subarrow
+description: Spy on your players. In style.
+commands:
+    commandspy:
+      description: Access commandspy subcommands
+      usage: /commandspy help
+      aliases: [c, cs, cspy]
+permissions:
+    commandspy.configure:
+        description: Allows use of configuration commands
+        default: false
+    commandspy.use:
+        description: Allows commandspy filters to take effect
+        default: op
+    commandspy.set:
+        description:
+        default: op
+        children:
+            commandspy.use: true
