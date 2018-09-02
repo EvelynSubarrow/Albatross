@@ -43,11 +43,4 @@ public class Main extends JavaPlugin
         config.applyTo(this.getConfig());
         this.saveConfig();
     }
-
-    @Override
-    public List<String> onTabComplete (CommandSender sender, Command cmd, String label, String[] args){
-        List<String> a_l = new ArrayList<>();
-        a_l.add("lol");
-        return a_l;
-    }
 }

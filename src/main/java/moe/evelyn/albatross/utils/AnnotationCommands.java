@@ -7,17 +7,18 @@ import java.util.List;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 public class AnnotationCommands extends SubCommandExecutor{
 	
-	@command(
+	@Subcommand(
 		maximumArgsLength=0,
 		description="null command",
 		permissions="*",
         visible=false
-    )
+        )
 	public void Null(CommandSender sender,String[] args){
 		for(Field f:this.getClass().getFields()){
 			if(f.isAnnotationPresent(config.class)){
@@ -46,7 +47,7 @@ public class AnnotationCommands extends SubCommandExecutor{
 		}
 	}
 
-@command(
+    @Subcommand(
 		maximumArgsLength=1000,
 		minimumArgsLength=2,
 		usage="<name> <value>",
@@ -93,7 +94,7 @@ public class AnnotationCommands extends SubCommandExecutor{
         }
     }
 
-	@command(
+	@Subcommand(
 		maximumArgsLength=2,
 		minimumArgsLength=1,
 		usage="<name>",

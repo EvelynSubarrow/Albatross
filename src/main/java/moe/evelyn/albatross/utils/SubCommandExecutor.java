@@ -6,6 +6,8 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.*;
@@ -13,16 +15,24 @@ import org.bukkit.entity.Player;
 
 public abstract class SubCommandExecutor implements CommandExecutor, TabCompleter
 {
-    private HashMap<String, Method> commands = new LinkedHashMap<String, Method>();
-    private HashMap<String, Method> commandsNoAlias = new LinkedHashMap<String, Method>();
+    private HashMap<String, Method> commands = new LinkedHashMap<>();
+    private HashMap<String, Method> commandsNoAlias = new LinkedHashMap<>();
+    private HashMap<String, Method> tabCompleters = new LinkedHashMap<>();
     {
         for(Method method : this.getClass().getMethods()) {
-            command annotation = method.getAnnotation(command.class);
+            Subcommand annotation = method.getAnnotation(Subcommand.class);
             if (annotation == null) continue;
             commands.put(method.getName(), method);
             commandsNoAlias.put(method.getName(), method);
             for (String alias : annotation.aliases()) {
                 commands.put(alias, method);
+            }
+        }
+        for (Method method : this.getClass().getMethods()) {
+            Suggestion annotation = method.getAnnotation(Suggestion.class);
+            if (annotation == null) continue;
+            for (String alias : annotation.value()) {
+                tabCompleters.put(alias, method);
             }
         }
     }
@@ -34,7 +44,7 @@ public abstract class SubCommandExecutor implements CommandExecutor, TabComplete
 		onCommand(sender,"","",args);
 	}
 	
-	@command(description="Empty command", visible=false)
+	@Subcommand(description="Empty command", visible=false)
 	public void Null(CommandSender sender, String[] args) {
 		sender.sendMessage(ChatColor.RED + "It is not possible to use this command with no arguments.");
 		sender.sendMessage(ChatColor.RED + "Use the 'help' subcommand for a list of available subcommands.");
@@ -78,7 +88,7 @@ public abstract class SubCommandExecutor implements CommandExecutor, TabComplete
                 onInvalidCommand(sender, arguments, commandName);
                 return;
             }
-            command c = method.getAnnotation(command.class);
+            Subcommand c = method.getAnnotation(Subcommand.class);
 
             if(arguments==null) arguments=c.defaultArguments();
 
@@ -95,7 +105,7 @@ public abstract class SubCommandExecutor implements CommandExecutor, TabComplete
                 }
             } else {
                 //well..... if they're here...
-                method.invoke(this, sender,arguments);
+                method.invoke(this, sender, arguments);
             }
         } catch(Exception e) {
 			e.printStackTrace();
@@ -103,15 +113,39 @@ public abstract class SubCommandExecutor implements CommandExecutor, TabComplete
 		}
 	}
 
-	private boolean hasPerms(CommandSender sender,String[] perms){
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
+        List<String> out = new ArrayList<String>();
+        if (args.length == 1) {
+            for (Method m : commandsNoAlias.values()) {
+                Subcommand c = m.getAnnotation(Subcommand.class);
+                if (c.visible() && m.getName().startsWith(args[0])) {
+                    out.add(m.getName());
+                }
+            }
+        } else if (args.length > 1) {
+            try {
+                Method m = tabCompleters.get(args[0]);
+                if (m != null) {
+                    out = (List)m.invoke(this, sender, Utils.stripArray(args));
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return out;
+    }
+
+	private boolean hasPerms(CommandSender sender, String[] perms) {
 	    if (sender instanceof ConsoleCommandSender) return true;
 		for(String p:perms) {
 			if(!sender.hasPermission(p)) return false;
 		}
 		return true;
 	}
-	
-	@command(
+
+	@Subcommand(
 			maximumArgsLength=1,
 			usage="[command]",
 			description="displays help"
@@ -123,14 +157,14 @@ public abstract class SubCommandExecutor implements CommandExecutor, TabComplete
                 sender.sendMessage(ChatColor.RED + "Unknown subcommand.");
                 return;
             }
-            command c = method.getAnnotation(command.class);
+            Subcommand c = method.getAnnotation(Subcommand.class);
                 sender.sendMessage("[" + ((hasPerms(sender,c.permissions())) ? ChatColor.GREEN : ChatColor.RED) +
                         method.getName() + ChatColor.GRAY + " subcommand Summary]");
             sender.sendMessage(ChatColor.GRAY + method.getName() + " " + c.usage() + ChatColor.GRAY + " - " + c.description());
             sender.sendMessage(ChatColor.GRAY + "Permissions: " + (c.permissions().length==0 ? ChatColor.GREEN + "none" : Utils.join(c.permissions(), ",", 0)));
 		} else {
             for (Method m : this.commandsNoAlias.values()) {
-                command c = m.getAnnotation(command.class);
+                Subcommand c = m.getAnnotation(Subcommand.class);
                 if (c.visible()) {
                     sender.sendMessage(((hasPerms(sender, c.permissions())) ? ChatColor.GREEN : ChatColor.RED) +
                             m.getName() + " " + c.usage() + ChatColor.GRAY + " - " + c.description());
@@ -139,7 +173,16 @@ public abstract class SubCommandExecutor implements CommandExecutor, TabComplete
         }
 	}
 
-	@Retention(RetentionPolicy.RUNTIME) public @interface command{
+	@Suggestion("help")
+    public List<String> helpCompletion(CommandSender sender, String[] args) {
+	    if (args.length!=1) return new ArrayList<>();
+        return commandsNoAlias.keySet().stream().filter(
+            (x) -> x.startsWith(args[0]) && commandsNoAlias.get(x).getAnnotation(Subcommand.class).visible()
+            ).collect(Collectors.toList());
+    }
+
+	@Retention(RetentionPolicy.RUNTIME)
+    public @interface Subcommand{
 		String[] permissions() default {};
 		String[] aliases() default {};
         boolean playerOnly() default false;
@@ -152,4 +195,9 @@ public abstract class SubCommandExecutor implements CommandExecutor, TabComplete
 		String description() default "";
         boolean visible() default true;
 	}
+
+	@Retention(RetentionPolicy.RUNTIME)
+    public @interface Suggestion {
+	    String[] value();
+    }
 }

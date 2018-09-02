@@ -11,7 +11,7 @@ public class CommandHandler extends SubCommandExecutor
         this.main = main;
     }
 
-    @command(
+    @Subcommand(
         permissions = {"commandspy.use"},
         visible=false
     )
@@ -20,7 +20,7 @@ public class CommandHandler extends SubCommandExecutor
 
     }
 
-    @command(
+    @Subcommand(
         permissions = {"commandspy.use"},
         aliases = {"true"}
     )
@@ -28,7 +28,7 @@ public class CommandHandler extends SubCommandExecutor
 
     }
 
-    @command(
+    @Subcommand(
             permissions = {"commandspy.use"},
             aliases = {"false"}
     )
@@ -36,7 +36,7 @@ public class CommandHandler extends SubCommandExecutor
 
     }
 
-    @command(
+    @Subcommand(
         permissions = {"commandspy.use"},
         aliases = {"s"}
     )
@@ -44,7 +44,7 @@ public class CommandHandler extends SubCommandExecutor
 
     }
 
-    @command(
+    @Subcommand(
             permissions = {"commandspy.use"},
             aliases = {"a"}
     )
@@ -52,7 +52,7 @@ public class CommandHandler extends SubCommandExecutor
 
     }
 
-    @command(
+    @Subcommand(
             permissions = {"commandspy.use"},
             aliases = {"u"}
     )
@@ -62,7 +62,7 @@ public class CommandHandler extends SubCommandExecutor
         sender.sendMessage(entry.version);
     }
 
-    @command(
+    @Subcommand(
         permissions = {"commandspy.configure"},
         aliases = {"c"},
         description = "View and alter plugin configuration"
