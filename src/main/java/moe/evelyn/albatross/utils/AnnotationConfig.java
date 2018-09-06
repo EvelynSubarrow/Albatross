@@ -33,7 +33,7 @@ public class AnnotationConfig extends AnnotationCommands implements Configurable
                         c.set(f.getName(), f.get(this));
                     }
 				}catch(Exception e){
-
+                    e.printStackTrace();
 				}
 			}
 		}
