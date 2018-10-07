@@ -9,7 +9,7 @@ import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
 
 
-public class AnnotationConfig extends AnnotationCommands implements Configurable
+public abstract class AnnotationConfig extends AnnotationCommands implements Configurable
 {
 
 	/*
@@ -44,17 +44,17 @@ public class AnnotationConfig extends AnnotationCommands implements Configurable
 		for(Field f:this.getClass().getFields()){
 			if(f.isAnnotationPresent(config.class)&&c.isSet(f.getName())){
 				try{
-					if(f.get(this) instanceof String){
+					if(f.getType().equals(String.class)) {
 						f.set(this, c.getString(f.getName()));
-					} else if(f.get(this) instanceof Long){
+					} else if(f.getType().equals(Long.class)){
 						f.set(this, c.getLong(f.getName()));
-					}else if(f.get(this) instanceof Integer){
+					}else if(f.getType().equals(Integer.class)){
 						f.set(this, c.getInt(f.getName()));
-					}else if(f.get(this) instanceof Double){
+					}else if(f.getType().equals(Double.class)){
 						f.set(this, c.getDouble(f.getName()));
-					}else if(f.get(this) instanceof Boolean){
+					}else if(f.getType().equals(Boolean.class)) {
 						f.set(this, c.getBoolean(f.getName()));
-					}else if(f.getType()==Location.class){
+                    }else if(f.getType().equals(Location.class)){
 						f.set(this, new Location(
 						    Bukkit.getServer().getWorld(c.getString(f.getName() + ".world")),
 						    c.getDouble(f.getName() + ".x"),

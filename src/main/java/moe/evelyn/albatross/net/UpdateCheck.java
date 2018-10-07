@@ -1,7 +1,6 @@
 package moe.evelyn.albatross.net;
 
 import moe.evelyn.albatross.Main;
-import org.bukkit.Bukkit;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -40,7 +39,7 @@ public class UpdateCheck
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
-                if (!main.isEnabled()) {
+                if (!main.isEnabled()||!main.config.updateCheck) {
                     timer.cancel();
                     return;
                 }

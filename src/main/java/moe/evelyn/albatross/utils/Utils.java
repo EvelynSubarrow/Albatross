@@ -1,5 +1,8 @@
 package moe.evelyn.albatross.utils;
 
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -56,4 +59,11 @@ public class Utils {
 		return iStr.substring(iStr.indexOf(delimiter, 0) + 1, iStr.length());
 	}
 
+	public static String getUUID(CommandSender sender){
+        if (sender instanceof Player) {
+            return ((Player)sender).getUniqueId().toString();
+        } else {
+            return "00000000-0000-0000-0000-000000000000";
+        }
+    }
 }

@@ -37,6 +37,8 @@ public abstract class SubCommandExecutor implements CommandExecutor, TabComplete
         }
     }
 
+    public abstract String getPrefix();
+
 	/*
 	 * For passing from other subcommandexecutor classes
 	 */
@@ -95,9 +97,9 @@ public abstract class SubCommandExecutor implements CommandExecutor, TabComplete
             if(!(sender instanceof Player)&&c.playerOnly()) {
                 onConsoleExecutePlayerOnlyCommand(sender,arguments,commandName);
             }else if(arguments.length>c.maximumArgsLength()) {
-                sender.sendMessage(c.usage());
+                sender.sendMessage(ChatColor.RED + "Too many arguments");
             }else if(arguments.length<c.minimumArgsLength()) {
-                sender.sendMessage(c.usage());
+                sender.sendMessage(ChatColor.RED + "Too few arguments");
             }else if(!hasPerms(sender,c.permissions())) {
                 sender.sendMessage(ChatColor.RED + "You do not have permission do do that!");
                 for(String p:c.permissions()) {
@@ -158,16 +160,18 @@ public abstract class SubCommandExecutor implements CommandExecutor, TabComplete
                 return;
             }
             Subcommand c = method.getAnnotation(Subcommand.class);
-                sender.sendMessage("[" + ((hasPerms(sender,c.permissions())) ? ChatColor.GREEN : ChatColor.RED) +
-                        method.getName() + ChatColor.GRAY + " subcommand Summary]");
+            sender.sendMessage("[" + ((hasPerms(sender,c.permissions())) ? ChatColor.GREEN : ChatColor.RED) +
+                method.getName() + ChatColor.GRAY + " subcommand Summary]");
             sender.sendMessage(ChatColor.GRAY + method.getName() + " " + c.usage() + ChatColor.GRAY + " - " + c.description());
             sender.sendMessage(ChatColor.GRAY + "Permissions: " + (c.permissions().length==0 ? ChatColor.GREEN + "none" : Utils.join(c.permissions(), ",", 0)));
 		} else {
             for (Method m : this.commandsNoAlias.values()) {
                 Subcommand c = m.getAnnotation(Subcommand.class);
                 if (c.visible()) {
-                    sender.sendMessage(((hasPerms(sender, c.permissions())) ? ChatColor.GREEN : ChatColor.RED) +
-                            m.getName() + " " + c.usage() + ChatColor.GRAY + " - " + c.description());
+                    ChatColor permissionColour = hasPerms(sender, c.permissions()) ? ChatColor.GREEN : ChatColor.RED;
+                    /*sender.sendMessage(((hasPerms(sender, c.permissions())) ? ChatColor.GREEN : ChatColor.RED) +
+                            m.getName() + " " + c.usage() + ChatColor.GRAY + " - " + c.description());*/
+                    sender.sendMessage(String.format("§8%s %s%s §7%s - %s", getPrefix(), permissionColour, m.getName(), c.usage(), c.description()));
                 }
             }
         }

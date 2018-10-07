@@ -5,4 +5,9 @@ import moe.evelyn.albatross.utils.AnnotationConfig;
 public class Config extends AnnotationConfig
 {
     @config public boolean updateCheck = true;
+
+    @Override
+    public String getPrefix() {
+        return "/commandspy config";
+    }
 }

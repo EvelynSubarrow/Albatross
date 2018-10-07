@@ -2,14 +2,10 @@ package moe.evelyn.albatross;
 
 import moe.evelyn.albatross.net.Statistics;
 import moe.evelyn.albatross.net.UpdateCheck;
+import moe.evelyn.albatross.rules.RuleManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Server;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class Main extends JavaPlugin
 {
@@ -18,15 +14,15 @@ public class Main extends JavaPlugin
     private Statistics statistics;
     private Server server;
 
-    protected UserManager userManager;
+    protected RuleManager ruleManager;
     protected UpdateCheck updateCheck;
-    protected Config config = new Config();
+    public Config config = new Config();
 
 
     @Override
     public void onEnable() {
         server = Bukkit.getServer();
-        userManager = new UserManager(this);
+        ruleManager = new RuleManager(this);
         server.getPluginManager().registerEvents(eventListener, this);
         server.getPluginCommand("commandspy").setExecutor(commandHandler);
         server.getPluginCommand("commandspy").setTabCompleter(commandHandler);
@@ -40,7 +36,8 @@ public class Main extends JavaPlugin
 
     @Override
     public void onDisable(){
-        config.applyTo(this.getConfig());
+        this.config.applyTo(this.getConfig());
         this.saveConfig();
+        this.ruleManager.unloadAll();
     }
 }

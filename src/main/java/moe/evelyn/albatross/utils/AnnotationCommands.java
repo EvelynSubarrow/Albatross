@@ -3,15 +3,18 @@ package moe.evelyn.albatross.utils;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.reflect.Field;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.entity.Player;
 
-public class AnnotationCommands extends SubCommandExecutor{
+public abstract class AnnotationCommands extends SubCommandExecutor {
 	
 	@Subcommand(
 		maximumArgsLength=0,
@@ -60,7 +63,7 @@ public class AnnotationCommands extends SubCommandExecutor{
                 if(f.isAnnotationPresent(config.class)){
                     if(!f.getAnnotation(config.class).settable()) return;
                     try{
-                        if(f.get(this) instanceof String){
+                        if(f.getType().equals(String.class)) {
                             f.set(this, Utils.join(args," ",1));
                         }else if(f.get(this) instanceof Long){
                             f.set(this, Long.parseLong(args[1]));
@@ -68,9 +71,9 @@ public class AnnotationCommands extends SubCommandExecutor{
                             f.set(this, Integer.parseInt(args[1]));
                         }else if(f.get(this) instanceof Double){
                             f.set(this, Double.parseDouble(args[1]));
-                        }else if(f.get(this) instanceof Boolean){
-                            f.set(this, Boolean.parseBoolean(args[1]));
-                        }else if(f.getType()==Location.class){
+                        }else if(f.get(this) instanceof Boolean) {
+							f.set(this, Boolean.parseBoolean(args[1]));
+                        } else if(f.getType() == Location.class){
                             if(args[1].equalsIgnoreCase("me")){
                                 f.set(this, ((Player)sender).getLocation());
                             }else if(args[1].equalsIgnoreCase("null")){
@@ -106,6 +109,7 @@ public class AnnotationCommands extends SubCommandExecutor{
 			if(f.getName().equalsIgnoreCase(args[0])){
 				if(f.isAnnotationPresent(config.class)){
 					if(!f.getAnnotation(config.class).settable()) return;
+					if(!f.getAnnotation(config.class).nullable()) return;
 					try{
 						f.set(this, null);
 						sender.sendMessage(ChatColor.GREEN + "Set " + f.getName() + " to null");
@@ -123,7 +127,9 @@ public class AnnotationCommands extends SubCommandExecutor{
     @Retention(RetentionPolicy.RUNTIME)
     public @interface config{
         String usage() default "";
+        String[] aliases() default {};
         boolean comparison() default false;
         boolean settable() default true;
+        boolean nullable() default false;
     }
 }

@@ -1,16 +1,11 @@
 package moe.evelyn.albatross;
 
-import moe.evelyn.albatross.utils.Utils;
-import org.bukkit.Bukkit;
-import org.bukkit.command.CommandSender;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.event.server.ServerCommandEvent;
-
-import java.text.MessageFormat;
 
 public class EventListener implements Listener
 {
@@ -19,31 +14,28 @@ public class EventListener implements Listener
         this.main = main;
     }
 
-    @EventHandler(priority = EventPriority.LOW)
-    public void onPlayerJoinEvent(PlayerJoinEvent event)
-    {
-        main.userManager.forSender(event.getPlayer());
+    @EventHandler
+    public void onPlayerJoinEvent(PlayerJoinEvent event) {
+        main.ruleManager.senderJoin(event.getPlayer());
     }
 
     @EventHandler
-    public void onPlayerQuitEvent(PlayerQuitEvent event)
-    {
-        main.userManager.removePlayer(event.getPlayer());
+    public void onPlayerQuitEvent(PlayerQuitEvent event) {
+        main.ruleManager.senderQuit(event.getPlayer());
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
-    public void onSignChangeEvent(SignChangeEvent event)
-    {
-
+    public void onSignChangeEvent(SignChangeEvent event) {
+        main.ruleManager.notify(event);
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onServerCommandEvent(ServerCommandEvent event){
-
+        main.ruleManager.notify(event);
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerCommandPreprocessEvent(PlayerCommandPreprocessEvent event) {
-
+        main.ruleManager.notify(event);
     }
 }
