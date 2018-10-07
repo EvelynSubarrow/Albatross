@@ -43,10 +43,9 @@ public class CommandHandler extends SubCommandExecutor
         maximumArgsLength = 0
     )
     public void on(CommandSender sender, String[] args) {
-        main.ruleManager.get(sender).forEach((r) -> sender.sendMessage("- " + r.toStringColoured()));
         main.ruleManager.get(sender).clear();
         main.ruleManager.get(sender).add(new Rule(RuleType.ALL, "*", "*"));
-        main.ruleManager.get(sender).forEach((r) -> sender.sendMessage("+ " + r.toStringColoured()));
+        main.ruleManager.get(sender).sendSummary(sender);
     }
 
     @Subcommand(
@@ -57,7 +56,7 @@ public class CommandHandler extends SubCommandExecutor
     )
     public void clear(CommandSender sender, String[] args) {
         main.ruleManager.get(sender).clear();
-        sender.sendMessage("Rules cleared");
+        main.ruleManager.get(sender).sendSummary(sender);
     }
 
     @Subcommand(
@@ -122,16 +121,16 @@ public class CommandHandler extends SubCommandExecutor
             } else {
                 sender.sendMessage(String.format("§8This is §6%s §8v§6%s", main.getDescription().getName(), entry.version));
                 if (entry.isAhead) {
-                    sender.sendMessage("This version is marked as a pre-release");
+                    sender.sendMessage("§3This version is marked as a pre-release");
                 }
                 if (entry.hasBugs) {
                     sender.sendMessage("§cThis version has bugs");
                     sender.sendMessage("§c" + entry.bugsDescription);
                 }
                 if (entry.hasUpdate) {
-                    sender.sendMessage("An update is available");
+                    sender.sendMessage("§3An update is available");
                 } else {
-                    sender.sendMessage("This is the latest version");
+                    sender.sendMessage("§3This is the latest version");
                 }
             }
         } else {

@@ -62,6 +62,7 @@ public class RuleGroup extends AnnotationConfig implements Iterable<Rule>
         } else {
             this.clear();
             this.add(new Rule(type, args[1], args[2]));
+            this.sendSummary(sender);
         }
     }
 
@@ -80,6 +81,7 @@ public class RuleGroup extends AnnotationConfig implements Iterable<Rule>
             sender.sendMessage("§cUsername and message can't be empty");
         } else {
             this.add(new Rule(type, args[1], args[2]));
+            this.sendSummary(sender);
         }
     }
 
@@ -95,6 +97,12 @@ public class RuleGroup extends AnnotationConfig implements Iterable<Rule>
             possibilities.add("*");
         }
         return possibilities.stream().filter((x) -> x.startsWith(lastArgument)).collect(Collectors.toList());
+    }
+
+    @Subcommand(visible=false)
+    @Override
+    public void Null(CommandSender sender, String[] args) {
+        this.sendSummary(sender);
     }
 
     public boolean matches(CommandSender sender, String[] lines) {
@@ -117,6 +125,13 @@ public class RuleGroup extends AnnotationConfig implements Iterable<Rule>
 
     public void clear() {
         rules.clear();
+    }
+
+    public void sendSummary(CommandSender sender) {
+        sender.sendMessage(String.format("§8%s §r%s", this.identifier, this.familiar));
+        for(Rule rule : this) {
+            sender.sendMessage("    " + rule.toStringColoured());
+        }
     }
 
     @Override

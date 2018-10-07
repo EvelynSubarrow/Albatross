@@ -1,7 +1,5 @@
 package moe.evelyn.albatross;
 
-import moe.evelyn.albatross.net.UpdateCheck;
-import org.bukkit.command.CommandSender;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
