@@ -15,48 +15,48 @@ import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.entity.Player;
 
 public abstract class AnnotationCommands extends SubCommandExecutor {
-	
-	@Subcommand(
-		maximumArgsLength=0,
-		description="null command",
-		permissions="*",
+
+    @Subcommand(
+        maximumArgsLength=0,
+        description="null command",
+        permissions="*",
         visible=false
         )
-	public void Null(CommandSender sender,String[] args){
-		for(Field f:this.getClass().getFields()){
-			if(f.isAnnotationPresent(config.class)){
-				try{
-					if(f.getType()==Location.class){
-						if(f.get(this)!=null){
-						sender.sendMessage(f.getName() + ": " +
+    public void Null(CommandSender sender,String[] args){
+        for(Field f:this.getClass().getFields()){
+            if(f.isAnnotationPresent(config.class)){
+                try{
+                    if(f.getType()==Location.class){
+                        if(f.get(this)!=null){
+                        sender.sendMessage(f.getName() + ": " +
                             ((Location)f.get(this)).getWorld().getName() + "," +
                             ((Location)f.get(this)).getBlockX() + "," +
                             ((Location)f.get(this)).getBlockY() + "," +
                             ((Location)f.get(this)).getBlockZ());
-						}else{
-							sender.sendMessage(ChatColor.GRAY + f.getName() + ": " + "null");
-						}
-					}else{
-						if(f.get(this).toString().equals("")||f.get(this).toString().equals("-1")){
-							sender.sendMessage(ChatColor.GRAY + f.getName() + ": " + f.get(this).toString());
-						}else{
-							sender.sendMessage(f.getName() + ": " + f.get(this).toString());
-						}
-					}
-				}catch(Exception e){
+                        }else{
+                            sender.sendMessage(ChatColor.GRAY + f.getName() + ": " + "null");
+                        }
+                    }else{
+                        if(f.get(this).toString().equals("")||f.get(this).toString().equals("-1")){
+                            sender.sendMessage(ChatColor.GRAY + f.getName() + ": " + f.get(this).toString());
+                        }else{
+                            sender.sendMessage(f.getName() + ": " + f.get(this).toString());
+                        }
+                    }
+                }catch(Exception e){
 
-				}
-			}
-		}
-	}
+                }
+            }
+        }
+    }
 
     @Subcommand(
-		maximumArgsLength=1000,
-		minimumArgsLength=2,
-		usage="<name> <value>",
-		description="Changes settings.",
-		permissions="*"
-		)
+        maximumArgsLength=1000,
+        minimumArgsLength=2,
+        usage="<name> <value>",
+        description="Changes settings.",
+        permissions="*"
+        )
     public void set(CommandSender sender,String[] args){
         for(Field f:this.getClass().getFields()){
             if(f.getName().equalsIgnoreCase(args[0])){
@@ -72,7 +72,7 @@ public abstract class AnnotationCommands extends SubCommandExecutor {
                         }else if(f.get(this) instanceof Double){
                             f.set(this, Double.parseDouble(args[1]));
                         }else if(f.get(this) instanceof Boolean) {
-							f.set(this, Boolean.parseBoolean(args[1]));
+                            f.set(this, Boolean.parseBoolean(args[1]));
                         } else if(f.getType() == Location.class){
                             if(args[1].equalsIgnoreCase("me")){
                                 f.set(this, ((Player)sender).getLocation());
@@ -97,32 +97,32 @@ public abstract class AnnotationCommands extends SubCommandExecutor {
         }
     }
 
-	@Subcommand(
-		maximumArgsLength=2,
-		minimumArgsLength=1,
-		usage="<name>",
-		description="Clears a value.",
-		permissions="*"
-		)
-	public void clear(CommandSender sender,String[] args){
-		for(Field f:this.getClass().getFields()){
-			if(f.getName().equalsIgnoreCase(args[0])){
-				if(f.isAnnotationPresent(config.class)){
-					if(!f.getAnnotation(config.class).settable()) return;
-					if(!f.getAnnotation(config.class).nullable()) return;
-					try{
-						f.set(this, null);
-						sender.sendMessage(ChatColor.GREEN + "Set " + f.getName() + " to null");
+    @Subcommand(
+        maximumArgsLength=2,
+        minimumArgsLength=1,
+        usage="<name>",
+        description="Clears a value.",
+        permissions="*"
+        )
+    public void clear(CommandSender sender,String[] args){
+        for(Field f:this.getClass().getFields()){
+            if(f.getName().equalsIgnoreCase(args[0])){
+                if(f.isAnnotationPresent(config.class)){
+                    if(!f.getAnnotation(config.class).settable()) return;
+                    if(!f.getAnnotation(config.class).nullable()) return;
+                    try{
+                        f.set(this, null);
+                        sender.sendMessage(ChatColor.GREEN + "Set " + f.getName() + " to null");
 
-					}catch(Exception e){
-						sender.sendMessage(ChatColor.RED + "An error occurred!");
-						e.printStackTrace();
-					}
-					return;
-				}
-			}
-		}
-	}
+                    }catch(Exception e){
+                        sender.sendMessage(ChatColor.RED + "An error occurred!");
+                        e.printStackTrace();
+                    }
+                    return;
+                }
+            }
+        }
+    }
 
     @Retention(RetentionPolicy.RUNTIME)
     public @interface config{

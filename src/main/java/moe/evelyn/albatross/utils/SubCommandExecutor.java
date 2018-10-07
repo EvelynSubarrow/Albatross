@@ -39,51 +39,51 @@ public abstract class SubCommandExecutor implements CommandExecutor, TabComplete
 
     public abstract String getPrefix();
 
-	/*
-	 * For passing from other subcommandexecutor classes
-	 */
-	public void onCommand(CommandSender sender,String[] args) {
-		onCommand(sender,"","",args);
-	}
-	
-	@Subcommand(description="Empty command", visible=false)
-	public void Null(CommandSender sender, String[] args) {
-		sender.sendMessage(ChatColor.RED + "It is not possible to use this command with no arguments.");
-		sender.sendMessage(ChatColor.RED + "Use the 'help' subcommand for a list of available subcommands.");
-	}
-	
-	public void onInvalidCommand(CommandSender sender,String[] arguments, String commandName) {
-		sender.sendMessage(ChatColor.RED + "The subcommand '" + commandName + "' does not exist.");
-	}
-	
-	public void onConsoleExecutePlayerOnlyCommand(CommandSender sender, String[] args, String commandName) {
-		sender.sendMessage(ChatColor.RED + "This command must be executed as a player.");
-	}
+    /*
+     * For passing from other subcommandexecutor classes
+     */
+    public void onCommand(CommandSender sender,String[] args) {
+        onCommand(sender,"","",args);
+    }
 
-	@Override
-	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-		return onCommand(sender, command.getName(), label, args);
-	}
-	
-	public boolean onCommand(CommandSender sender, String command, String label, String[] args) {
-		ArrayList<String> arguments=new ArrayList<String>();
-		String c="";
-		try{
-			c=args[0];
-			boolean b=false;
-			for(String s:args){
-				if(!b){b=true;continue;}
-				arguments.add(s);
-			}
-		}catch(Exception e){
+    @Subcommand(description="Empty command", visible=false)
+    public void Null(CommandSender sender, String[] args) {
+        sender.sendMessage(ChatColor.RED + "It is not possible to use this command with no arguments.");
+        sender.sendMessage(ChatColor.RED + "Use the 'help' subcommand for a list of available subcommands.");
+    }
 
-		}
-		onSubCommand(sender, arguments.toArray(new String[arguments.size()]), c);
-		return true;
-	}
+    public void onInvalidCommand(CommandSender sender,String[] arguments, String commandName) {
+        sender.sendMessage(ChatColor.RED + "The subcommand '" + commandName + "' does not exist.");
+    }
 
-	public void onSubCommand(CommandSender sender,String[] arguments,String commandName){
-		if(commandName.isEmpty()) commandName="Null";
+    public void onConsoleExecutePlayerOnlyCommand(CommandSender sender, String[] args, String commandName) {
+        sender.sendMessage(ChatColor.RED + "This command must be executed as a player.");
+    }
+
+    @Override
+    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        return onCommand(sender, command.getName(), label, args);
+    }
+
+    public boolean onCommand(CommandSender sender, String command, String label, String[] args) {
+        ArrayList<String> arguments=new ArrayList<String>();
+        String c="";
+        try{
+            c=args[0];
+            boolean b=false;
+            for(String s:args){
+                if(!b){b=true;continue;}
+                arguments.add(s);
+            }
+        }catch(Exception e){
+
+        }
+        onSubCommand(sender, arguments.toArray(new String[arguments.size()]), c);
+        return true;
+    }
+
+    public void onSubCommand(CommandSender sender,String[] arguments,String commandName){
+        if(commandName.isEmpty()) commandName="Null";
         try {
             Method method = commands.get(commandName);
             if (method == null) {
@@ -110,10 +110,10 @@ public abstract class SubCommandExecutor implements CommandExecutor, TabComplete
                 method.invoke(this, sender, arguments);
             }
         } catch(Exception e) {
-			e.printStackTrace();
-			sender.sendMessage(ChatColor.RED + "Internal error!");
-		}
-	}
+            e.printStackTrace();
+            sender.sendMessage(ChatColor.RED + "Internal error!");
+        }
+    }
 
     @SuppressWarnings("unchecked")
     @Override
@@ -139,21 +139,21 @@ public abstract class SubCommandExecutor implements CommandExecutor, TabComplete
         return out;
     }
 
-	private boolean hasPerms(CommandSender sender, String[] perms) {
-	    if (sender instanceof ConsoleCommandSender) return true;
-		for(String p:perms) {
-			if(!sender.hasPermission(p)) return false;
-		}
-		return true;
-	}
+    private boolean hasPerms(CommandSender sender, String[] perms) {
+        if (sender instanceof ConsoleCommandSender) return true;
+        for(String p:perms) {
+            if(!sender.hasPermission(p)) return false;
+        }
+        return true;
+    }
 
-	@Subcommand(
-			maximumArgsLength=1,
-			usage="[command]",
-			description="displays help"
-			)
-	public void help(CommandSender sender,String[] args){
-		if(args.length==1){
+    @Subcommand(
+            maximumArgsLength=1,
+            usage="[command]",
+            description="displays help"
+            )
+    public void help(CommandSender sender,String[] args){
+        if(args.length==1){
             Method method = this.commands.get(args[0]);
             if (method==null) {
                 sender.sendMessage(ChatColor.RED + "Unknown subcommand.");
@@ -164,7 +164,7 @@ public abstract class SubCommandExecutor implements CommandExecutor, TabComplete
                 method.getName() + ChatColor.GRAY + " subcommand Summary]");
             sender.sendMessage(ChatColor.GRAY + method.getName() + " " + c.usage() + ChatColor.GRAY + " - " + c.description());
             sender.sendMessage(ChatColor.GRAY + "Permissions: " + (c.permissions().length==0 ? ChatColor.GREEN + "none" : Utils.join(c.permissions(), ",", 0)));
-		} else {
+        } else {
             for (Method m : this.commandsNoAlias.values()) {
                 Subcommand c = m.getAnnotation(Subcommand.class);
                 if (c.visible()) {
@@ -175,33 +175,33 @@ public abstract class SubCommandExecutor implements CommandExecutor, TabComplete
                 }
             }
         }
-	}
+    }
 
-	@Suggestion("help")
+    @Suggestion("help")
     public List<String> helpCompletion(CommandSender sender, String[] args) {
-	    if (args.length!=1) return new ArrayList<>();
+        if (args.length!=1) return new ArrayList<>();
         return commandsNoAlias.keySet().stream().filter(
             (x) -> x.startsWith(args[0]) && commandsNoAlias.get(x).getAnnotation(Subcommand.class).visible()
             ).collect(Collectors.toList());
     }
 
-	@Retention(RetentionPolicy.RUNTIME)
+    @Retention(RetentionPolicy.RUNTIME)
     public @interface Subcommand{
-		String[] permissions() default {};
-		String[] aliases() default {};
+        String[] permissions() default {};
+        String[] aliases() default {};
         boolean playerOnly() default false;
 
         String[] defaultArguments() default {};
-		int minimumArgsLength() default 0;
-		int maximumArgsLength() default 100;
+        int minimumArgsLength() default 0;
+        int maximumArgsLength() default 100;
 
-		String usage() default "";
-		String description() default "";
+        String usage() default "";
+        String description() default "";
         boolean visible() default true;
-	}
+    }
 
-	@Retention(RetentionPolicy.RUNTIME)
+    @Retention(RetentionPolicy.RUNTIME)
     public @interface Suggestion {
-	    String[] value();
+        String[] value();
     }
 }
