@@ -38,8 +38,8 @@ public class Utils {
         try {
             boolean b=false;
             for(String s:array){
-                if(!b){b=true;continue;}
-                arguments.add(s);
+                if(b) arguments.add(s);
+                b = true;
             }
         }catch(Exception e){}
 
