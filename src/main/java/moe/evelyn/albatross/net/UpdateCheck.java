@@ -1,6 +1,7 @@
 package moe.evelyn.albatross.net;
 
 import moe.evelyn.albatross.Main;
+import org.bukkit.command.CommandSender;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -63,6 +64,23 @@ public class UpdateCheck
                 }
             }
         }, 0, 1000*60*60); //TODO: 1200 Immediately, then every sixty minutes hence
+    }
+
+    public void maybeUpdateNotify(CommandSender sender) {
+        if (!sender.hasPermission("commandspy.use")) return;
+        UpdateCheck.VersionEntry entry = this.getCurrentVersion();
+        if (entry != null && main.config.updateCheck) {
+            if (entry.isAhead) {
+                sender.sendMessage("§8[§9Commandspy§8] §3This version is marked as a pre-release");
+            }
+            if (entry.hasBugs) {
+                sender.sendMessage("§8[§9Commandspy§8] §cThis version has bugs");
+                sender.sendMessage("§8[§9Commandspy§8] §c" + entry.bugsDescription);
+            }
+            if (entry.hasUpdate) {
+                sender.sendMessage("§8[§9Commandspy§8] §3An update is available");
+            }
+        }
     }
 
     public static final class VersionEntry
