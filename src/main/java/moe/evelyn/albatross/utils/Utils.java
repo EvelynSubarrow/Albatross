@@ -33,9 +33,9 @@ public class Utils {
         }
     }
 
-    public static String[] stripArray(String[] array){
+    public static String[] stripArray(String[] array) {
         ArrayList<String> arguments=new ArrayList<String>();
-        try{
+        try {
             boolean b=false;
             for(String s:array){
                 if(!b){b=true;continue;}

@@ -68,14 +68,14 @@ public abstract class SubCommandExecutor implements CommandExecutor, TabComplete
     public boolean onCommand(CommandSender sender, String command, String label, String[] args) {
         ArrayList<String> arguments=new ArrayList<String>();
         String c="";
-        try{
+        try {
             c=args[0];
             boolean b=false;
-            for(String s:args){
+            for(String s:args) {
                 if(!b){b=true;continue;}
                 arguments.add(s);
             }
-        }catch(Exception e){
+        }catch(Exception e) {
 
         }
         onSubCommand(sender, arguments.toArray(new String[arguments.size()]), c);
@@ -152,8 +152,8 @@ public abstract class SubCommandExecutor implements CommandExecutor, TabComplete
             usage="[command]",
             description="displays help"
             )
-    public void help(CommandSender sender,String[] args){
-        if(args.length==1){
+    public void help(CommandSender sender,String[] args) {
+        if(args.length==1) {
             Method method = this.commands.get(args[0]);
             if (method==null) {
                 sender.sendMessage(ChatColor.RED + "Unknown subcommand.");
@@ -186,7 +186,7 @@ public abstract class SubCommandExecutor implements CommandExecutor, TabComplete
     }
 
     @Retention(RetentionPolicy.RUNTIME)
-    public @interface Subcommand{
+    public @interface Subcommand {
         String[] permissions() default {};
         String[] aliases() default {};
         boolean playerOnly() default false;
