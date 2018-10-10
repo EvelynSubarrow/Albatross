@@ -1,7 +1,6 @@
 package moe.evelyn.albatross.rules;
 
 import moe.evelyn.albatross.utils.AnnotationConfig;
-import moe.evelyn.albatross.utils.SubCommandExecutor;
 import moe.evelyn.albatross.utils.Utils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;

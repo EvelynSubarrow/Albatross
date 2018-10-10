@@ -1,7 +1,6 @@
 package moe.evelyn.albatross.rules;
 
 import moe.evelyn.albatross.Main;
-import moe.evelyn.albatross.rules.RuleGroup;
 import moe.evelyn.albatross.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
