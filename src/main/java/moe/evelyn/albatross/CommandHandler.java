@@ -29,10 +29,7 @@ public class CommandHandler extends SubCommandExecutor
     @Override
     public void Null(CommandSender sender, String[] args) {
         for(RuleGroup group : main.ruleManager.getApplicableRuleGroups(sender)) {
-            sender.sendMessage(String.format("§8%s §r%s", group.identifier, group.familiar));
-            for(Rule rule : group) {
-                sender.sendMessage("    " + rule.toStringColoured());
-            }
+            group.sendSummary(sender);
         }
     }
 
