@@ -213,7 +213,6 @@ public class RuleManager
         File fn = Paths.get(main.getDataFolder().getAbsolutePath(), type, group.getSlug() + ".yml").toFile();
         YamlConfiguration config = new YamlConfiguration();
         group.applyTo(config);
-        config.save(fn);
         if (group.originalFile!=null && !fn.equals(group.originalFile)) {
             if(group.originalFile.delete()) {
                 main.getLogger().info("Successfully purged old file for " + type + "/" + group.getSlug());
@@ -221,6 +220,7 @@ public class RuleManager
                 main.getLogger().info("Failed to purge old file for " + type + "/" + group.getSlug() + ": " + group.originalFile.getAbsolutePath());
             }
         }
+        config.save(fn);
         main.getLogger().info("Successfully committed " + type + "/" + group.getSlug());
     }
 }
