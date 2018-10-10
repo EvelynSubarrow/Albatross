@@ -3,8 +3,10 @@ package moe.evelyn.albatross.rules;
 import moe.evelyn.albatross.Main;
 import moe.evelyn.albatross.rules.RuleGroup;
 import moe.evelyn.albatross.utils.Utils;
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.server.ServerCommandEvent;
@@ -52,59 +54,73 @@ public class RuleManager
     }
 
     public void notify(SignChangeEvent event) {
+        List<CommandSender> receivers = new ArrayList<>();
         for(CommandSender sender : subscribers) {
             for (RuleGroup group : getApplicableRuleGroups(sender)) {
                 if(group.matches(event.getPlayer(), event.getLines())) {
                     if(group.effect==GroupEffect.ACCEPT) {
-                        sender.sendMessage(String.format("§e%s: %s", event.getPlayer().getName(), Utils.join(event.getLines(), "§8|§e", 0)));
+                        receivers.add(sender);
                     } else {
                         break;
                     }
                 }
             }
+        }
+        String highlightColour = getHighlightColour(event.getPlayer(), receivers);
+        for (CommandSender sender : receivers) {
+            sender.sendMessage(String.format("§8<%s%s§8> %s%s", highlightColour, event.getPlayer().getName(), highlightColour, Utils.join(event.getLines(), "§8|" + highlightColour, 0)));
         }
     }
 
     public void notify(ServerCommandEvent event) {
-        for(CommandSender sender : subscribers) {
-            for (RuleGroup group : getApplicableRuleGroups(sender)) {
-                if(group.matches(event.getSender(), "/" + event.getCommand())) {
-                    if(group.effect==GroupEffect.ACCEPT) {
-                        sender.sendMessage(String.format("§5%s: /%s", event.getSender().getName(), event.getCommand()));
-                    } else {
-                        break;
-                    }
-                }
-            }
-        }
+        notify(event.getSender(), "/" + event.getCommand());
     }
 
     public void notify(PlayerCommandPreprocessEvent event) {
-        for(CommandSender sender : subscribers) {
-            for (RuleGroup group : getApplicableRuleGroups(sender)) {
-                if(group.matches(event.getPlayer(), event.getMessage())) {
-                    if(group.effect==GroupEffect.ACCEPT) {
-                        sender.sendMessage(String.format("§b%s: %s", event.getPlayer().getName(), event.getMessage()));
-                    } else {
-                        break;
-                    }
-                }
-            }
-        }
+        notify(event.getPlayer(), event.getMessage());
     }
 
     public void notify(CommandSender eventSender, String message) {
+        List<CommandSender> receivers = new ArrayList<>();
         for(CommandSender sender : subscribers) {
             for (RuleGroup group : getApplicableRuleGroups(sender)) {
                 if(group.matches(eventSender, message)) {
                     if(group.effect==GroupEffect.ACCEPT) {
-                        sender.sendMessage(String.format("%s: %s", eventSender.getName(), message));
+                        receivers.add(sender);
                     } else {
                         break;
                     }
                 }
             }
         }
+        String highlightColour = getHighlightColour(eventSender, receivers);
+        for (CommandSender sender : receivers) {
+            sender.sendMessage(String.format("§8<%s%s§8> %s%s", highlightColour, eventSender.getName(), highlightColour, message));
+        }
+    }
+
+    public String getHighlightColour(CommandSender sender, List<CommandSender> receivers) {
+        if (sender == main.getServer().getConsoleSender()) {
+            return "§5";
+        } else if (receivers.contains(sender)) {
+            return "§b";
+        } else if (subscribers.contains(sender)) {
+            return "§3";
+        } else {
+            return "§9";
+        }
+    }
+
+    public void startPermissionCheck() {
+        Bukkit.getScheduler().runTaskTimer(main, () -> {
+            for (Player player : Bukkit.getServer().getOnlinePlayers()) {
+                if (player.hasPermission("commandspy.receive")) {
+                    subscribers.add(player);
+                } else {
+                    subscribers.remove(player);
+                }
+            }
+        }, 40, 40);
     }
 
     public void senderJoin(CommandSender sender) {

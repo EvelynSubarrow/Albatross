@@ -26,6 +26,7 @@ public class Main extends JavaPlugin
     public void onEnable() {
         server = Bukkit.getServer();
         ruleManager = new RuleManager(this);
+        ruleManager.startPermissionCheck();
         server.getPluginManager().registerEvents(eventListener, this);
         server.getPluginCommand("commandspy").setExecutor(commandHandler);
         server.getPluginCommand("commandspy").setTabCompleter(commandHandler);
