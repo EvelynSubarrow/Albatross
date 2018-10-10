@@ -7,6 +7,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.Server;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.Timer;
+
 public class Main extends JavaPlugin
 {
     private EventListener eventListener = new EventListener(this);
@@ -18,6 +20,7 @@ public class Main extends JavaPlugin
     protected UpdateCheck updateCheck;
     public Config config = new Config();
 
+    public Timer timer = new Timer(true);
 
     @Override
     public void onEnable() {
@@ -28,6 +31,7 @@ public class Main extends JavaPlugin
         server.getPluginCommand("commandspy").setTabCompleter(commandHandler);
         this.statistics = new Statistics(this);
         this.updateCheck = new UpdateCheck(this);
+        this.updateCheck.startUpdateCheck();
 
         config.loadFrom(this.getConfig());
         config.applyTo(this.getConfig());

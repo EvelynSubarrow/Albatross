@@ -27,7 +27,6 @@ public class UpdateCheck
             e.printStackTrace();
         }
         this.main = main;
-        this.startUpdateCheck();
     }
 
     public synchronized VersionEntry getCurrentVersion()
@@ -35,13 +34,12 @@ public class UpdateCheck
         return this.currentVersion;
     }
 
-    private void startUpdateCheck() {
-        final Timer timer = new Timer(true);
-        timer.scheduleAtFixedRate(new TimerTask() {
+    public void startUpdateCheck() {
+        main.timer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
                 if (!main.isEnabled()||!main.config.updateCheck) {
-                    timer.cancel();
+                    main.timer.cancel();
                     return;
                 }
                 try {
