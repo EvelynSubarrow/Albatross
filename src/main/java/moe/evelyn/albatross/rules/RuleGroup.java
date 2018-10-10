@@ -127,7 +127,7 @@ public class RuleGroup extends AnnotationConfig implements Iterable<Rule>
     }
 
     public void sendSummary(CommandSender sender) {
-        sender.sendMessage(String.format("§8%s §r%s", this.identifier, this.familiar));
+        sender.sendMessage(String.format("§8%s §r%s %s", this.identifier, this.familiar, this.effect.getStringColoured()));
         for(Rule rule : this) {
             sender.sendMessage("    " + rule.toStringColoured());
         }
