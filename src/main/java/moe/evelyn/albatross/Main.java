@@ -43,5 +43,6 @@ public class Main extends JavaPlugin
         this.config.applyTo(this.getConfig());
         this.saveConfig();
         this.ruleManager.unloadAll();
+        this.timer.cancel();
     }
 }
