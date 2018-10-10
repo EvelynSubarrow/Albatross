@@ -38,8 +38,8 @@ public class UpdateCheck
         main.timer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
-                if (!main.isEnabled()||!main.config.updateCheck) {
-                    main.timer.cancel();
+                // If the user has update checking off, don't do anything when running
+                if (!main.config.updateCheck) {
                     return;
                 }
                 try {
