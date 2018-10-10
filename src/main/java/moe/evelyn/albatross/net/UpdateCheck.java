@@ -10,7 +10,6 @@ import javax.net.ssl.HttpsURLConnection;
 import java.io.InputStreamReader;
 import java.lang.reflect.Field;
 import java.net.URL;
-import java.util.Timer;
 import java.util.TimerTask;
 
 public class UpdateCheck
