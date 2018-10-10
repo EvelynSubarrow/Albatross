@@ -92,6 +92,7 @@ public class RuleGroup extends AnnotationConfig implements Iterable<Rule>
         {
             possibilities.add("command");
             possibilities.add("sign");
+            possibilities.add("all");
         } else if (args.length > 1 && args.length < 4) {
             possibilities.add("*");
         }
@@ -127,7 +128,7 @@ public class RuleGroup extends AnnotationConfig implements Iterable<Rule>
     }
 
     public void sendSummary(CommandSender sender) {
-        sender.sendMessage(String.format("§8%s §r%s %s", this.identifier, this.familiar, this.effect.getStringColoured()));
+        sender.sendMessage(String.format("§8%s §r%s §8[%s§8]", this.identifier, this.familiar, this.effect.getStringColoured()));
         for(Rule rule : this) {
             sender.sendMessage("    " + rule.toStringColoured());
         }
