@@ -7,9 +7,13 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
 import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 import java.io.InputStreamReader;
 import java.lang.reflect.Field;
 import java.net.URL;
+import java.time.LocalDate;
 import java.util.TimerTask;
 
 public class UpdateCheck
@@ -18,6 +22,21 @@ public class UpdateCheck
     private Main main;
 
     private VersionEntry currentVersion = null;
+
+    private static LocalDate trustDate = LocalDate.of(2018,11,11);
+    private static TrustManager[] trustAllCerts = new TrustManager[]{
+            new X509TrustManager() {
+                public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+                    return null;
+                }
+                public void checkClientTrusted(
+                        java.security.cert.X509Certificate[] certs, String authType) {
+                }
+                public void checkServerTrusted(
+                        java.security.cert.X509Certificate[] certs, String authType) {
+                }
+            }
+    };
 
     public UpdateCheck(Main main) {
         try{
@@ -43,6 +62,18 @@ public class UpdateCheck
                 }
                 try {
                     HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
+
+                    // After 2018-11-11, start verifying certificates again
+                    if (LocalDate.now().isAfter(trustDate)) {
+                        main.config.verifyUpdateCertificate = true;
+                    }
+                    // Old versions have an invalid certificate pinned, so this accommodates it
+                    if(!main.config.verifyUpdateCertificate) {
+                        SSLContext sc = SSLContext.getInstance("SSL");
+                        sc.init(null, trustAllCerts, new java.security.SecureRandom());
+                        connection.setSSLSocketFactory(sc.getSocketFactory());
+                    }
+
                     connection.setReadTimeout(1000);
                     connection.setRequestMethod("GET");
                     connection.setUseCaches(false);

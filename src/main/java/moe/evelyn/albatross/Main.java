@@ -25,6 +25,11 @@ public class Main extends JavaPlugin
     @Override
     public void onEnable() {
         server = Bukkit.getServer();
+
+        config.loadFrom(this.getConfig());
+        config.applyTo(this.getConfig());
+        this.saveConfig();
+
         ruleManager = new RuleManager(this);
         ruleManager.startPermissionCheck();
         server.getPluginManager().registerEvents(eventListener, this);
@@ -33,10 +38,6 @@ public class Main extends JavaPlugin
         this.statistics = new Statistics(this);
         this.updateCheck = new UpdateCheck(this);
         this.updateCheck.startUpdateCheck();
-
-        config.loadFrom(this.getConfig());
-        config.applyTo(this.getConfig());
-        this.saveConfig();
     }
 
     @Override
