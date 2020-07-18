@@ -5,6 +5,7 @@ import moe.evelyn.albatross.net.UpdateCheck;
 import moe.evelyn.albatross.rules.RuleManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Server;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Timer;
@@ -38,6 +39,11 @@ public class Main extends JavaPlugin
         this.statistics = new Statistics(this);
         this.updateCheck = new UpdateCheck(this);
         this.updateCheck.startUpdateCheck();
+
+        for (Player p : Bukkit.getServer().getOnlinePlayers()) {
+            ruleManager.senderJoin(p);
+            updateCheck.maybeUpdateNotify(p);
+        }
     }
 
     @Override
