@@ -1,6 +1,7 @@
 name: Commandspy
 main: moe.evelyn.albatross.Main
-version: 5.0.2
+version: 5.0.3
+api-version: 1.13
 author: Subarrow
 description: Spy on your players. In style.
 commands:
