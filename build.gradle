@@ -13,7 +13,7 @@ plugins {
 }
 
 group 'moe.evelyn.albatross'
-version '5.0.3'
+version '5.1'
 
 sourceCompatibility = 1.8
 

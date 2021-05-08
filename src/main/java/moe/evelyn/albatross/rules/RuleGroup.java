@@ -99,6 +99,16 @@ public class RuleGroup extends AnnotationConfig implements Iterable<Rule>
         return possibilities.stream().filter((x) -> x.startsWith(lastArgument)).collect(Collectors.toList());
     }
 
+    @Subcommand(
+            permissions={"commandspy.use"},
+            maximumArgsLength = 0,
+            description = "removes every entry from this group"
+    )
+    public void clear(CommandSender sender, String[] args) {
+        this.clear();
+        sender.sendMessage("§8Group cleared.");
+    }
+
     @Subcommand(visible=false)
     @Override
     public void Null(CommandSender sender, String[] args) {
